@@ -10,7 +10,7 @@ Base.metadata.create_all(engine)
 
 app = FastAPI(title="AttachLog Placement Service", version="1.0.0",
               description="Placements managed by the coordinator once per term. "
-                          "Get a token from POST /v1/auth/token, then click Authorize.")
+                          "Get a token from POST /v1/auth/login, then click Authorize.")
 register_handlers(app)
 app.include_router(auth_router)
 app.include_router(router)

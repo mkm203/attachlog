@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AttachLog Logbook Service",
-    "description": "Weekly log entries and supervisor reviews. Get a token from the placement service (POST /v1/auth/token), then click Authorize.",
+    "description": "Weekly log entries and supervisor reviews. Get a token from the placement service (POST /v1/auth/login), then click Authorize.",
     "version": "1.0.0"
   },
   "paths": {

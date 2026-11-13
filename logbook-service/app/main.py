@@ -9,7 +9,7 @@ Base.metadata.create_all(engine)
 
 app = FastAPI(title="AttachLog Logbook Service", version="1.0.0",
               description="Weekly log entries and supervisor reviews. "
-                          "Get a token from the placement service (POST /v1/auth/token), then click Authorize.")
+                          "Get a token from the placement service (POST /v1/auth/login), then click Authorize.")
 register_handlers(app)
 app.include_router(router)
 

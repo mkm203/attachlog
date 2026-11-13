@@ -90,9 +90,10 @@ def stack():
             _wait_health(client, f"http://127.0.0.1:{port}", tmp / f"{name}.log")
 
         def get_token(sub: str, role: str) -> str:
-            response = client.post(f"{placement_url}/v1/auth/token",
-                                   json={"sub": sub, "role": role}, timeout=10.0)
+            response = client.post(f"{placement_url}/v1/auth/login",
+                                   json={"username": sub, "password": f"Demo-{sub}-2026"}, timeout=10.0)
             assert response.status_code == 200, response.text
+            assert response.json()["role"] == role
             return response.json()["access_token"]
 
         yield Stack(placement_url, logbook_url, bff_url, get_token, client)

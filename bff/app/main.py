@@ -9,7 +9,7 @@ graphql_app = GraphQLRouter(schema, context_getter=get_context, graphql_ide="gra
 
 app = FastAPI(title="AttachLog GraphQL BFF", version="1.0.0",
               description="GraphQL facade over the placement and logbook REST services. "
-                          "Get a token from the placement service (POST /v1/auth/token), then "
+                          "Get a token from the placement service (POST /v1/auth/login), then "
                           "use it as the Bearer token in the GraphiQL headers panel.")
 app.include_router(graphql_app, prefix="/graphql")
 

@@ -87,11 +87,17 @@ def graphql(url: str, query: str, variables: dict, token: str) -> dict:
         raise ClientError(f"HTTP {response.status_code} from {url}")
     return body["data"]
 
+# Synthetic demo accounts (see the README). They protect no real data.
+DEMO_PASSWORDS = {uid: f"Demo-{uid}-2026" for uid in ("stu-1", "stu-2", "cs-1", "cs-2", "as-1", "co-1")}
 
-def token(base_url: str, sub: str, role: str) -> str:
-    body = rest("POST", f"{base_url}/v1/auth/token", json={"sub": sub, "role": role})
+
+def token(base_url: str, username: str, role: str) -> str:
+    """Log in with the demo password and check that the account has the role we expect."""
+    body = rest("POST", f"{base_url}/v1/auth/login",
+                json={"username": username, "password": DEMO_PASSWORDS[username]})
+    if body["role"] != role:
+        raise ClientError(f"{username} logged in as {body['role']}, expected {role}")
     return body["access_token"]
-
 
 def seed(client: argparse.Namespace, placement_url: str) -> tuple[str, str]:
     coordinator = token(placement_url, "co-1", "coordinator")

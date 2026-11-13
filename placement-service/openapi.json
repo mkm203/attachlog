@@ -2,23 +2,23 @@
   "openapi": "3.1.0",
   "info": {
     "title": "AttachLog Placement Service",
-    "description": "Placements managed by the coordinator once per term. Get a token from POST /v1/auth/token, then click Authorize.",
+    "description": "Placements managed by the coordinator once per term. Get a token from POST /v1/auth/login, then click Authorize.",
     "version": "1.0.0"
   },
   "paths": {
-    "/v1/auth/token": {
+    "/v1/auth/login": {
       "post": {
         "tags": [
           "auth"
         ],
-        "summary": "Issue Token",
-        "description": "Return a signed HS256 token for the given user id and role.\n\nThis is a development convenience (there is no user store yet); the real\ndeployment must replace it with a proper login endpoint.",
-        "operationId": "issue_token_v1_auth_token_post",
+        "summary": "Login",
+        "description": "Exchange a username and password for a signed HS256 token.\n\nUnknown user and wrong password give the same 401, so the answer does not\nreveal which usernames exist.",
+        "operationId": "login_v1_auth_login_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TokenRequest"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           },
@@ -31,6 +31,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -594,6 +604,35 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "LoginRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "description": "Credentials of one of the demo users (see the README for the list).",
+        "examples": [
+          {
+            "password": "Demo-co-1-2026",
+            "username": "co-1"
+          }
+        ]
+      },
       "PlacementCreate": {
         "properties": {
           "student_id": {
@@ -856,43 +895,6 @@
           }
         ]
       },
-      "TokenRequest": {
-        "properties": {
-          "sub": {
-            "type": "string",
-            "maxLength": 50,
-            "minLength": 1,
-            "title": "Sub"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "student",
-              "company_supervisor",
-              "academic_supervisor",
-              "coordinator"
-            ],
-            "title": "Role"
-          }
-        },
-        "type": "object",
-        "required": [
-          "sub",
-          "role"
-        ],
-        "title": "TokenRequest",
-        "description": "Development helper: pick the user and role, get a signed JWT back.",
-        "examples": [
-          {
-            "role": "student",
-            "sub": "stu-1"
-          },
-          {
-            "role": "coordinator",
-            "sub": "co-1"
-          }
-        ]
-      },
       "TokenResponse": {
         "properties": {
           "access_token": {
@@ -916,6 +918,10 @@
           "role": {
             "type": "string",
             "title": "Role"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
           }
         },
         "type": "object",
@@ -923,13 +929,15 @@
           "access_token",
           "expires_in",
           "sub",
-          "role"
+          "role",
+          "name"
         ],
         "title": "TokenResponse",
         "examples": [
           {
             "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example.signature",
             "expires_in": 28800,
+            "name": "Julie Mbia",
             "role": "coordinator",
             "sub": "co-1",
             "token_type": "bearer"

@@ -90,16 +90,13 @@ class ErrorResponse(BaseModel):
 
     model_config = ConfigDict(json_schema_extra={"examples": [{
         "error": {"code": "placement_not_found", "message": "Placement P9 not found", "details": None}}]})
-
-
-class TokenRequest(BaseModel):
-    """Development helper: pick the user and role, get a signed JWT back."""
-    sub: str = Field(min_length=1, max_length=50)
-    role: Literal["student", "company_supervisor", "academic_supervisor", "coordinator"]
+class LoginRequest(BaseModel):
+    """Credentials of one of the demo users (see the README for the list)."""
+    username: str = Field(min_length=1, max_length=50)
+    password: str = Field(min_length=1, max_length=100)
 
     model_config = ConfigDict(json_schema_extra={"examples": [
-        {"sub": "stu-1", "role": "student"},
-        {"sub": "co-1", "role": "coordinator"}]})
+        {"username": "co-1", "password": "Demo-co-1-2026"}]})
 
 
 class TokenResponse(BaseModel):
@@ -108,8 +105,9 @@ class TokenResponse(BaseModel):
     expires_in: int
     sub: str
     role: str
+    name: str
 
     model_config = ConfigDict(json_schema_extra={"examples": [{
         "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.example.signature",
         "token_type": "bearer", "expires_in": 28800,
-        "sub": "co-1", "role": "coordinator"}]})
+        "sub": "co-1", "role": "coordinator", "name": "Julie Mbia"}]})
